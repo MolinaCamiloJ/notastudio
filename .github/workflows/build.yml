@@ -1,10 +1,11 @@
 name: Compilar instalador de Windows
 
-# Se ejecuta automáticamente cada vez que se publica un Release en GitHub,
+# Se ejecuta automáticamente cada vez que subís una etiqueta (tag) con formato vX.X.X,
 # o manualmente desde la pestaña "Actions" del repositorio.
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - "v*"
   workflow_dispatch:
 
 jobs:
