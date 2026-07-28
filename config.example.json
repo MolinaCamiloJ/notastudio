@@ -1,0 +1,5 @@
+{
+  "githubClientId": "TU_CLIENT_ID_AQUI",
+  "githubClientSecret": "TU_CLIENT_SECRET_AQUI",
+  "oauthCallbackPort": 53219
+}

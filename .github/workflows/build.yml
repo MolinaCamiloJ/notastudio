@@ -1,0 +1,39 @@
+name: Compilar instalador de Windows
+
+# Se ejecuta automáticamente cada vez que se publica un Release en GitHub,
+# o manualmente desde la pestaña "Actions" del repositorio.
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Crear config.json con las credenciales de GitHub OAuth
+        shell: bash
+        run: |
+          cat > config.json << EOF
+          {
+            "githubClientId": "${{ secrets.GH_CLIENT_ID }}",
+            "githubClientSecret": "${{ secrets.GH_CLIENT_SECRET }}",
+            "oauthCallbackPort": 53219
+          }
+          EOF
+
+      - name: Compilar el instalador (.exe)
+        run: npx electron-builder --win --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

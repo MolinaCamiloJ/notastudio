@@ -1,0 +1,42 @@
+{
+  "name": "notastudio",
+  "version": "1.0.0",
+  "description": "NotaStudio - Sube tus repositorios a GitHub de forma sencilla",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MolinaCamiloJ/notastudio.git"
+  },
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.notastudio.app",
+    "productName": "NotaStudio",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*",
+      "config.json"
+    ],
+    "win": {
+      "icon": "assets/pug_icon.ico"
+    },
+    "mac": {
+      "icon": "assets/pug_icon.png"
+    },
+    "linux": {
+      "icon": "assets/pug_icon.png"
+    },
+    "publish": {
+      "provider": "github"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+# Dependencias
+node_modules/
+
+# Artefactos de compilación
+dist/
+out/
+
+# Configuración local con credenciales — NUNCA subir esto
+config.json
+
+# Sesión guardada / datos locales de la app
+*.dat
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
