@@ -36,7 +36,8 @@
       "icon": "assets/pug_icon.png"
     },
     "publish": {
-      "provider": "github"
+      "provider": "github",
+      "releaseType": "release"
     }
   }
 }
