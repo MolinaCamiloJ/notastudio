@@ -223,23 +223,50 @@ ipcMain.handle('folder:select', async () => {
 });
 
 // ---------- Subida del repositorio ----------
-function runGitCommand(args, cwd, onProgress) {
+function runGitCommand(args, cwd, onProgress, timeoutMs = 15 * 60 * 1000) {
   return new Promise((resolve, reject) => {
-    const proc = spawn('git', args, { cwd });
+    const proc = spawn('git', args, {
+      cwd,
+      env: {
+        ...process.env,
+        // Evita que git se quede esperando una contraseña de forma interactiva
+        // (eso hacía que el proceso se colgara para siempre sin avisar nada)
+        GIT_TERMINAL_PROMPT: '0'
+      }
+    });
     let stderrBuf = '';
+    let finished = false;
+
+    const timer = setTimeout(() => {
+      if (finished) return;
+      finished = true;
+      proc.kill();
+      reject(new Error('La operación de git tardó demasiado y fue cancelada (posible conexión muy lenta).'));
+    }, timeoutMs);
 
     proc.stdout.on('data', (d) => { /* silencioso */ });
     proc.stderr.on('data', (d) => {
       const text = d.toString();
       stderrBuf += text;
-      const match = text.match(/(\d{1,3})%/);
+      // Solo tomamos el progreso de la fase real de subida de datos ("Writing objects"),
+      // ignorando otras fases (Enumerating/Counting/Compressing) que también muestran
+      // porcentajes propios y hacían "saltar" la barra hacia arriba y abajo.
+      const match = text.match(/Writing objects:\s*(\d{1,3})%/);
       if (match && onProgress) {
         onProgress(Math.min(100, parseInt(match[1], 10)));
       }
     });
 
-    proc.on('error', (err) => reject(err));
+    proc.on('error', (err) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      reject(err);
+    });
     proc.on('close', (codeNum) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
       if (codeNum === 0) resolve();
       else reject(new Error(stderrBuf || `git ${args.join(' ')} falló con código ${codeNum}`));
     });
