@@ -1,6 +1,6 @@
 {
   "name": "notastudio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "NotaStudio - Sube tus repositorios a GitHub de forma sencilla",
   "main": "main.js",
   "repository": {
